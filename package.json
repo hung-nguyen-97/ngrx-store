@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --prod --baseHref=https://hung-nguyen-97.github.io/ngrx-store/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
