@@ -7,6 +7,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { CommonModule } from "@angular/common";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from "ngx-toastr";
+import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 
 @NgModule({
   declarations: [CartComponent],
@@ -19,5 +20,6 @@ import { ToastrModule } from "ngx-toastr";
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot(), // ToastrModule added
   ],
+  providers: [ConfirmationDialogService]
 })
 export class CartModule {}

@@ -8,19 +8,7 @@ import { Cart } from "../stores/cart/cart.model";
 })
 export class BackendService {
 
-  store: Array<Cart> = [{
-    id: 1,
-    name: "cart 1",
-    price: 50,
-    thumbnail: "https://angular.io/assets/images/logos/angular/shield-large.svg",
-    images: [
-      "https://angular.io/assets/images/logos/angular/shield-large.svg",
-      "https://angular.io/assets/images/logos/angular/shield-large.svg",
-      "https://angular.io/assets/images/logos/angular/shield-large.svg",
-      "https://angular.io/assets/images/logos/angular/shield-large.svg"
-    ],
-    active: true
-  }];
+  store: Array<Cart> = [];
 
   getCart(id: number): Observable<Cart> {
     return new Observable(ob => {
@@ -39,7 +27,8 @@ export class BackendService {
   addCart(cart: Cart): Observable<Cart> {
     return new Observable(ob => {
       const maxCartId = Math.max(...this.store.map(x => x.id));
-      cart.id = maxCartId ? maxCartId + 1 : 1;
+      console.log(maxCartId)
+      cart.id = maxCartId !== -Infinity ? maxCartId + 1 : 1;
       this.store.push(cart);
       ob.next(cart)
       ob.complete();

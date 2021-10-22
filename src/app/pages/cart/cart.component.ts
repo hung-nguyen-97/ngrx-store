@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CartService } from 'src/app/services/cart.services';
 import { Cart } from 'src/app/stores/cart/cart.model';
 import { ToastrService } from 'ngx-toastr';
+import { ConfirmationDialogService } from '../confirmation-dialog/confirmation-dialog.service';
 
 
 export enum StateType {
@@ -36,19 +37,23 @@ export class CartComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private confirmationDialogService: ConfirmationDialogService
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.getCartList();
-    this.cartService.addCartResult().subscribe(data => {
+    
+    this.cartService.addCartResult()
+    .subscribe(data => {
       if(data) {
         this.showSuccess(`Add cart ${data.name} successfully`);
       }
     });
     
-    this.cartService.updateCartResult().subscribe(data => {
+    this.cartService.updateCartResult()
+    .subscribe(data => {
       if(data) {
         this.showSuccess(`Update cart ${data.name} successfully`);
       }
@@ -75,9 +80,9 @@ export class CartComponent implements OnInit {
   initForm() {
     this.formCart = this.fb.group({
       id: null,
-      name: this.fb.control(''),
-      price: this.fb.control(''),
-      thumbnail: this.fb.control(''),
+      name: this.fb.control('', [Validators.required]),
+      price: this.fb.control(0),
+      thumbnail: this.fb.control('', [Validators.required]),
       images: this.fb.array([
         this.fb.control('')
       ]),
@@ -85,6 +90,8 @@ export class CartComponent implements OnInit {
     });
   }
 
+  get name() { return this.formCart.get('name'); }
+  get thumbnail() {return this.formCart.get('thumbnail'); }
   get images(): FormArray{ 
     return this.formCart.get('images') as FormArray;
   }
@@ -112,19 +119,21 @@ export class CartComponent implements OnInit {
    */
   onSubmit() {
 
-    // Submit add cart
-    if(this.saveButton.state === StateType.Add || this.saveButton.state === StateType.Normal) {
-      this.cartService.addCart(this.formCart.value);
-    }
+    if(this.formCart.valid) {
+      // Submit add cart
+      if(this.saveButton.state === StateType.Add || this.saveButton.state === StateType.Normal) {
+        this.cartService.addCart(this.formCart.value);
+      }
 
-    // Submit update cart
-    if(this.saveButton.state === StateType.Update) {
-      this.cartService.updateCart(this.formCart.value.id, this.formCart.value);
-    }
+      // Submit update cart
+      if(this.saveButton.state === StateType.Update) {
+        this.cartService.updateCart(this.formCart.value.id, this.formCart.value);
+      }
 
-    // Refresh Cart list
-    this.cartService.fetchCartList();
-    this.resetForm();
+      // Refresh Cart list
+      this.cartService.fetchCartList();
+      this.resetForm();
+    }
   }
 
   onCancel() {
@@ -144,10 +153,15 @@ export class CartComponent implements OnInit {
   }
 
   deleteCart(id: number) {
-    // this.cartService.deleteCart(id);
+    this.confirmationDialogService
+    .confirm('Please confirm..',  `Do you really want to delete cart id ${id} ?`)
+    .then(() =>{
 
-    // // Refresh Cart list
-    // this.cartService.fetchCartList();
+      // Delete cart
+      this.cartService.deleteCart(id);
+      // Refresh Cart list
+      this.cartService.fetchCartList();
+    });
   }
 
   showSuccess(message: string, title?: string) {
