@@ -10,7 +10,7 @@
 
         <div class="form-group">
           <label for="price">Price</label>
-          <input type="number" class="form-control" id="exampleInputPassword1" placeholder="Price" formControlName="price">
+          <input type="number" class="form-control" id="price" placeholder="Price" formControlName="price">
         </div>
 
         <div class="form-group">
@@ -20,18 +20,14 @@
         </div>
 
         <div class="form-group" formArrayName="images" >
-          <label for="example-tel-input">Images:</label>
-          <div class="form-row mb-2" *ngFor="let c of images.controls; index as i">
-            <div class="row" *ngIf="images.controls.length">
-              <div class="col-sm-6">
-                <input class="form-control" type="tel" id="example-tel-input" placeholder="Enter image link" [formControlName]="i">
-              </div>
-              <div class="col-sm-6">
-                <button class="btn btn-info mr-1" (click)="addImages()">+</button>
-                <button class="btn btn-danger mr-1" (click)="removeImages(i)" *ngIf="images.controls.length > 1">-</button>
-              </div>
+          <label>Images:</label>
+          <ng-container *ngFor="let c of images.controls; index as i">
+            <div class="input-group mb-2" *ngIf="images.controls.length">
+              <input class="form-control mr-1" type="text" placeholder="Enter image link" [formControlName]="i">
+              <button class="btn btn-info" (click)="addImages()">+</button>
+              <button class="btn btn-danger ml-1" (click)="removeImages(i)" *ngIf="images.controls.length > 1">-</button>
             </div>
-          </div>
+          </ng-container>
         </div>
 
         <div class="form-group form-check">
